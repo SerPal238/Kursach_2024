@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Просмотр кейса</title>
+    <style>
+        .criteria {
+            color: white;
+        }
+        .points {
+            color: white;
+        }
+        .back {
+         position: absolute;
+         bottom: 35px;
+         left: 75px;
+         width: 250px;
+         height: 60px;
+         background-color: white;
+         border-radius: 30px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         color: black;
+         font-size: 20px;
+         font-weight: bold;
+         font-family: Arial, sans-serif;
+        }
+        .back:hover {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ case.case_name }}</h1>
+    <p>{{ case.case_description }}</p>
+
+    <table>
+        <tr>
+            <th class="criteria">Критерии</th>
+            <th class="points">Баллы</th>
+        </tr>
+        {% for criterion in case.criteria %}
+            <tr>
+                <td class="criteria">{{ criterion.criteria_name }}</td>
+                <td class="points">{{ criterion.points }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+<script>
+        function nomer() {
+            var nomer = 1;
+           nomer.innerHTML = nomer;
+           var nomer +=1;
+        }
+</script>
+<a href="http://127.0.0.1:5000/" target="_blank" class="back">Назад</a>
+</body>
+</html>

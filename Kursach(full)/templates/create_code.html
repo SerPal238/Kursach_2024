@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+Создание кодов
+{% endblock %}
+
+{% block body %}
+
+<header>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+        <p class="d-flex align-items-center text-white">
+            <img src="static/images/mascot.svg" alt="mascot" width="90">
+        </p>
+
+        <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+            <p class="fs-2 text-white" style="width: 250px; height: 30px;">Evento x HSE</p>
+        </nav>
+    </div>
+
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+      <h1 class="display-1 fw-bold text-white">Создание кодов</h1>
+        <p></p>
+    </div>
+
+    <form action="" method="post" class="form-contact">
+        <div class="col-lg-4 mx-auto">
+            <h2 class="display-5 fw-bold text-white text-center">Код для жюри</h2>
+            <p><label class="col-lg-2 col-form-label"></label> <input type="text" name="code_jury" value="" class="form-control form-control-lg" placeholder="Код из 5 букв или цифр" required/>
+            <p class="text-custom">-</p>
+            <h2 class="display-5 fw-bold text-white text-center">Код для участников</h2>
+            <p><label class="col-lg-2 col-form-label"></label> <input type="text" name="code_players" value="" class="form-control form-control-lg" placeholder="Код из 5 букв или цифр" required/>
+            <div class="container">
+                <p class="text-custom">-</p>
+            <div class="row g-5">
+                <div class="col-6">
+                    <p><input class="fs-2 btn btn-lg btn-light rounded-pill"  type="submit" style="width: 460px; height: 80px;" value="Сохранить" />
+                </div>
+            </div>
+                </div>
+        </div>
+    </form>
+
+</header>
+
+
+
+
+
+{% endblock %}

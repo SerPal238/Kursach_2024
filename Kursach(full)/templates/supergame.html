@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Title</title>
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    <form method="post">
+        {% for  el in questions %}
+            <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/supergame/{{el.id}}" style="width: 400px; height: 70px;" >{{el.theme }}</a>
+            <a href="/supergame/{{el.id}}/del" class="fs-2 btn btn-lg btn-light rounded-pill">Удалить</a>
+            <p></p>
+        {% endfor %}
+
+
+    </form>
+    {% for el in players%}
+                        <p class="fs-2 text-white"> {{el.name}} = {{el.score}}</p>
+
+    {% endfor %}
+</div>
+</body>
+</html>

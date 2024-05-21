@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+Организатор: новый аккаунт
+{% endblock %}
+
+{% block body %}
+
+<header>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+        <p class="d-flex align-items-center text-white">
+            <img src="static/images/mascot.svg" alt="mascot" width="90">
+        </p>
+
+        <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+            <p class="fs-2 text-white" style="width: 250px; height: 30px;">Evento x HSE</p>
+        </nav>
+    </div>
+
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+      <h1 class="display-1 fw-bold text-white">Новый аккаунт</h1>
+        <p></p>
+    </div>
+
+    <form action="" method="post" class="form-contact">
+        <div class="col-lg-8 mx-auto">
+            <p><label class="col-lg-2 col-form-label"></label> <input type="text" name="name" value="" class="form-control form-control-lg" placeholder="ФИО организатора" required/>
+            <p><label class="col-lg-2 col-form-label"></label> <input type="email" name="email" value="" class="form-control form-control-lg" placeholder="Email" required/>
+            <p><label class="col-lg-2 col-form-label"></label> <input type="password" name="psw" value="" class="form-control form-control-lg" placeholder="Пароль" required/>
+            <p><label class="col-lg-2 col-form-label"></label> <input type="password" name="psw_confirm" value="" class="form-control form-control-lg" placeholder="Введите пароль еще раз" required />
+            <div class="container">
+                <p class="text-custom">-</p>
+            <div class="row g-4">
+                <div class="col-4">
+                    <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/home" role="button" style="width: 300px; height: 80px;">В главное меню</a>
+                </div>
+                <div class="col-4">
+                    <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/manager" role="button" style="width: 300px; height: 80px;">Назад</a>
+                </div>
+                <div class="col-4">
+                    <p><input class="fs-2 btn btn-lg btn-light rounded-pill"  type="submit" style="width: 300px; height: 80px;" value="Сохранить"/>
+                </div>
+            </div>
+                </div>
+        </div>
+    </form>
+
+</header>
+
+
+
+
+
+{% endblock %}

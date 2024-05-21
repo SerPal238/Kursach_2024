@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Document</title>
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    {% for elem in themes %}
+            {% for el in questions %}
+                {% if (((el.id-6)//5) == (elem.id - 2 )) %}
+                    {%if (el.id % 5 == 1) or (el.id == 1)%}
+                        <p class="fs-2 text-white"> {{elem.name}}</p>
+                    {% endif %}
+                <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/show_all_questions/{{el.id}}" style="width: 100px; height: 70px;">{{el.cost }}</a>
+
+                {% endif %}
+            {% endfor %}
+        {%endfor%}
+
+    <p></p>
+    {% for el in players%}
+        <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/player_update_creation/{{el.id}}" style="width: 300px; height: 70px;"> {{el.name}}</a>
+            {% if (el.id % 2 == 0)%}
+                <p></p>
+            {% endif %}
+    {% endfor %}
+    <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('game_creation') }}';">К добавлению</button>
+    <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('ongoing_game') }}';">Играть</button>
+</div>
+</body>
+</html>

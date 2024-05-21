@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+Страница про нас
+{% endblock %}
+
+{% block body %}
+
+<body class="d-flex h-100 text-center text-white">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+
+        <header>
+            <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+              <p class="d-flex align-items-center text-white">
+                <img src="static/images/mascot.svg" alt="mascot" width="90">
+              </p>
+
+              <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+                <a class="fs-5 btn btn-lg btn-light rounded-pill" href="/home" role="button" style="width: 200px; height: 50px;">В главное меню</a>
+              </nav>
+            </div>
+        </header>
+
+        <main class="px-3">
+            <h1>Кто мы?</h1>
+            <p class="lead"> Мы - студенты 2 курса ОП "Бизнес - информатика", данное приложение было реализовано в рамках нашей курсовой работы. Если у вас возникли вопросы или предложения по работе приложения, мы с радостью ответим вам и учтем все пожелания. Удачных игр! </p>
+            <p class="lead">
+            </p>
+            <img src="static/images/polina.jpg" alt="photo" width="250">
+            <img src="static/images/dasha.jpg" alt="photo" width="243">
+            <img src="static/images/sergey.jpg" alt="photo" width="218">
+            <img src="static/images/nikita.jpg" alt="photo" width="222">
+            <img src="static/images/slava.jpg" alt="photo" width="220">
+        </main>
+
+
+        <footer class="mt-auto text-white-50">
+            <p> </p>
+            <p>Разработчики: <a href="https://t.me/prossserpinee" class="text-white">Полина Козлова</a>, <a href="https://t.me/leaeleae" class="text-white">Дарья Скворцова</a>, <a href="https://t.me/SerPal238" class="text-white">Сергей Плаксин</a>, <a href="https://t.me/bazozavr2402" class="text-white">Никита Петров</a>, <a href="https://t.me/Slavka17" class="text-white">Вячеслав Костылев</a></p>
+            <p>Научный руководитель: <a href="https://www.hse.ru/org/persons/46747923" class="text-white">Улитин Борис Игоревич</a></p>
+        </footer>
+    </div>
+
+</body>
+
+
+
+{% endblock %}
+

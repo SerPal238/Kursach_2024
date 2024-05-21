@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Document</title>
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+
+        <p><button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('input_theme') }}';" style="width: 330px; height: 70px;">Добавить тему</button>
+          </p>
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('input_question_info') }}';" style="width: 330px; height: 70px;">Добавить вопрос</button>
+        <p></p>
+
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('show_all_questions') }}';" style="width: 330px; height: 70px;">Показать все</button>
+        <p></p>
+
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('game_creation_begin') }}';" style="width: 330px; height: 70px;">Назад</button>
+</div>
+</body>
+</html>

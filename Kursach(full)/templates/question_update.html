@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Title</title>
+</head>
+<body>
+    <form method="post">
+
+    <div class="row mb-3">
+    <label for="inputName3" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-8">
+        <p class="text-custom">-</p>
+      <input type="text" class="form-control form-control-lg" id="inputName3" placeholder="Цена вопроса" name="cost">
+    </div>
+  </div>
+
+
+  <div class="row mb-3">
+    <label for="inputPassword3" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-8">
+        <p class="text-custom">-</p>
+      <input type="text" class="form-control form-control-lg" id="inputPassword3" placeholder="Вопрос" name="question">
+    </div>
+  </div>
+
+        <div class="row mb-3">
+    <label for="inputName3" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-8">
+        <p class="text-custom">-</p>
+      <input type="text" class="form-control form-control-lg" id="inputEmail3" placeholder="Ответ" name="answer">
+    </div>
+  </div>
+
+
+
+        <input class="fs-2 btn btn-lg btn-light rounded-pill" type="submit" style="width: 400px; height: 70px;" value="Обновить" >
+
+    </form>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <p class="fs-2 text-white"> Тема - {{question.theme}}</p>
+        <p class="fs-2 text-white"> Вопрос - {{question.question}}</p>
+        <p class="fs-2 text-white"> Ответ - {{question.answer}}</p>
+
+        <p><a href="/show_all_superquestions/{{question.id}}/del" class="fs-2 btn btn-lg btn-light rounded-pill">Удалить</a>
+        <a href="/show_all_superquestions/{{question.id}}/upd" class="fs-2 btn btn-lg btn-light rounded-pill">Изменить</a>
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='{{ url_for('show_all_superquestions') }}';" style="width: 200px; height: 70px;" >Назад</button></p>
+</div>
+</body>
+</html>

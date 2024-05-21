@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Title</title>
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <p class="fs-2 text-white">{{question.question}}</p>
+        <p>
+        {% for el in players%}
+            <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/ongoing_game/{{question.id}}/true_or_false/{{el.id}}" >{{el.name}} {{el.score}}</a>
+        {% endfor %}
+
+<form method="post">
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" name="pravda" type="submit" value="true" onclick="location.href='{{ url_for('ongoing_game') }}';">Назад</button></p>
+        </form>
+</div>
+</body>
+</html>

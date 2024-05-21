@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Title</title>
+</head>
+<body>
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='/ongoing_game';">Открыть 1 раунд</button></p>
+        <button class="fs-2 btn btn-lg btn-light rounded-pill" onclick="location.href='/supergame';">Открыть супер-игру</button></p>
+        {% for elem in themes %}
+            {% for el in questions %}
+                {% if el.id < 51 and el.id > 25 %}
+                    {% if (((el.id-6)//5) == (elem.id - 2 )) %}
+                        {%if ((el.id % 5 == 1) or (el.id == 1))%}
+                            <p class="fs-2 text-white"> {{elem.name}}</p>
+                        {% endif %}
+                        <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/ongoing_game/{{el.id}}" style="width: 100px; height: 70px;" >{{el.cost }}</a>
+
+
+                    {% endif %}
+
+                {%endif%}
+            {% endfor %}
+        {%endfor%}
+
+
+
+        {% for el in players%}
+                <p class="fs-2 text-white"> {{el.name}} = {{el.score}}</p>
+        {% endfor %}
+        </p>
+    <p></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'participants1.html' %}
+
+{% block sos %}
+Участники
+{% endblock %}
+
+{% block part %}
+{% for key, value in slovar.items() %}
+<a href="http://127.0.0.1:5000/jury_№participant?player_number={{ key }}" class="part{{ key }}">{{ value }}</a>
+{% endfor %}
+
+
+{% endblock %}
+{% block mom %}
+<h1 style="color: white; font-family: Arial; text-align: center; font-size: 50px">Участники</h1>
+{% endblock %}

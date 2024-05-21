@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главное меню
+{% endblock %}
+
+{% block body %}
+<header>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+      <p class="d-flex align-items-center text-white">
+        <img src="static/images/mascot.svg" alt="mascot" width="90">
+      </p>
+
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        <a class="fs-5 me-3 py-2 link-body-emphasis text-white" href="/instruction">Инструкция</a>
+        <a class="fs-5 me-3 py-2 link-body-emphasis text-white" href="/about">Про нас</a>
+      </nav>
+    </div>
+
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+      <h1 class="display-1 fw-bold text-white">Evento</h1>
+      <p class="fs-1 fw-light text-white">by HSE</p>
+      <p class="text-custom">-</p>
+    </div>
+
+
+    <div class="container overflow-hidden">
+  <div class="row g-5">
+    <div class="col-6">
+      <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/teamleader" role="button" style="width: 600px; height: 100px;">Я тимлид команды →</a>
+    </div>
+    <div class="col-6">
+      <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/player" role="button" style="width: 600px; height: 100px;">Я участник →</a>
+    </div>
+    <div class="col-6">
+      <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/manager" role="button" style="width: 600px; height: 100px;">Я организатор →</a>
+    </div>
+    <div class="col-6">
+      <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/jury" role="button" style="width: 600px; height: 100px;">Я член жюри →</a>
+    </div>
+  </div>
+</div>
+
+  </header>
+{% endblock %}

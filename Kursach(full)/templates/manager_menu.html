@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+Организатор: меню
+{% endblock %}
+
+{% block body %}
+<header>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+      <p class="d-flex align-items-center text-white">
+        <img src="static/images/mascot.svg" alt="mascot" width="90">
+      </p>
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+            <p class="fs-2 text-white" style="width: 250px; height: 30px;">Evento x HSE</p>
+        </nav>
+    </div>
+
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+      <h1 class="display-1 fw-bold text-white">Меню</h1>
+      <p class="text-custom">-</p>
+    </div>
+
+
+    <div class="container overflow-hidden">
+  <div class="row g-5">
+    <div class="col-4" style="text-align:center;">
+      <a class="btn btn-primary d-flex align-items-center fs-2 btn-lg btn-light rounded-pill" href="/manager_new_game" role="button" style="width: 390px; height: 200px; text-align: center;">Создать новую игру</a>
+    </div>
+    <div class="col-4" style="text-align:center;">
+      <a class="btn btn-primary d-flex align-items-center fs-2 btn-lg btn-light rounded-pill" href="/" role="button" style="width: 390px; height: 200px; text-align: center;">Просмотреть активные игры</a>
+    </div>
+      <div class="col-4" style="text-align:center;">
+      <a class="btn btn-primary d-flex align-items-center fs-2 btn-lg btn-light rounded-pill" href="/" role="button" style="width: 390px; height: 200px; text-align: center;">Просмотреть архив игр</a>
+    </div>
+            <p class="text-custom">-</p>
+    <div class="col-6">
+      <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/home" role="button" style="width: 600px; height: 100px;">В главное меню</a>
+    </div>
+  </div>
+</div>
+
+  </header>
+{% endblock %}
