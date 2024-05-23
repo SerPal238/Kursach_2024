@@ -31,7 +31,8 @@
     border-bottom: 1px solid #4C594F;
     text-align: left;
    }
-   .back {
+
+        .back {
          position: absolute;
          bottom: 35px;
          left: 75px;
@@ -48,6 +49,9 @@
          font-family: Arial, sans-serif;
          text-decoration: none;
         }
+        .back:hover {
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -59,50 +63,24 @@
         <th>Итого баллов</th>
         <th>Мax баллы</th>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-
-        <td></td>
-        <td></td>
-        <td></td>
+    {%for team in teams%}
+        </tr>
+        <td class="team-number"></td>
+        <td>{{team.name}}</td>
+        <td>{{team.score}}</td>
+    {% endfor %}
     </tr>
 </table>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const teamNumbers = document.querySelectorAll(".team-number");
+        teamNumbers.forEach((element, index) => {
+            element.textContent = index + 1;
+        });
+    });
+</script>
 <div class="back">Назад</div>
-<a href="http://127.0.0.1:5000/%E2%84%96team"  class="back">Назад</a>
+<a href="http://127.0.0.1:5000/jury_teams" class="back">Назад</a>
+
 </body>
 </html>

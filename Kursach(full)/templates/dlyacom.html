@@ -33,7 +33,7 @@
    }
     .notion {
             position: absolute;
-            bottom: 125px; /* Регулирование расстояния от нижнего края */
+            bottom: 230px; /* Регулирование расстояния от нижнего края */
             left: 80px; /* Регулирование расстояния от левого края */
             width: 300px; /* Регулирование ширины */
             height: 400px; /* Регулирование высоты */
@@ -45,6 +45,16 @@
             color: white; /* Цвет текста */
             font-size: 18px; /* Размер текста */
             font-family: Arial, sans-serif; /* Шрифт текста */
+        }
+        .notion textarea {
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            resize: none;
+            padding: 30px;
+            overflow: auto;
+            word-wrap: break-word;
+            font-size: 20px;
         }
          .back {
          position: absolute;
@@ -64,10 +74,44 @@
          text-decoration: none;
         }
 
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 0px;
+        margin: 0px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: rgba(45, 65, 115);
+        height: 30px;
+        color: white;
+        font-family: Arial;
+        font-size: 25px
+
+    }
+            .continue {
+         text-decoration: none;
+         position: absolute;
+         bottom: 35px;
+         right: 75px;
+         width: 250px;
+         height: 60px;
+         background-color: white;
+         border-radius: 30px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         color: black;
+         font-size: 20px;
+         font-weight: bold;
+         font-family: Arial, sans-serif;
+        }
+
     </style>
 </head>
 <body>
 {% block bodycom %}{% endblock %}
+<form id="totalScoreForm" method="post" action="/save_data_team">
 <table border="3" style="border:solid white" >
     <tr>
         <th>№</th>
@@ -75,40 +119,44 @@
         <th>Баллы команды</th>
         <th>Max баллы</th>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+    {% for criterion in case.criteria %}
+        <tr>
+            <td class="criteria-number"></td>
+            <td>{{ criterion.criteria_name }}</td>
+            <td><input type="number" name="participant_score" value="0" min="0" max="{{ criterion.points }}"  oninput="updateTotal();"></td>
+            <td>{{ criterion.points }}</td>
+        </tr>
+    {% endfor %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const criteriaNumbers = document.querySelectorAll(".criteria-number");
+        criteriaNumbers.forEach((element, index) => {
+            element.textContent = index + 1;
+        });
+    });
+    // Функция для обновления итоговой суммы баллов
+function updateTotal() {
+    var total = 0;
+    // Перебираем все поля ввода и суммируем их значения
+    var inputs = document.getElementsByName('participant_score');
+    for (var i = 0; i < inputs.length; i++) {
+        total += parseInt(inputs[i].value, 10) || 0;
+    }
+    // Обновляем итоговую сумму на странице
+    document.getElementById('totalScore').textContent = total;
+
+// Добавляем обработчик события 'submit' к форме
+document.getElementById('totalScoreForm').addEventListener('submit', function(event) {
+    // Предотвращаем стандартное поведение формы
+
+    // Обновляем итоговую сумму
+    updateTotal();
+});
+}
+
+// Инициализация итоговой суммы до начала ввода
+updateTotal();
+</script>
     </tr>
         <td></td>
         <td>Итого:</td>
@@ -116,9 +164,12 @@
         <td></td>
     </tr>
 </table>
-
-<div class="notion">Поле для заметок</div>
+    <button class="continue" type="submit">Подтвердить</button>
+</form>
+<div class="notion">
+    <textarea rows="13" cols="20" placeholder="Поле для заметок" ></textarea>
+</div>
 <div class="back">Назад</div>
-<a href="http://127.0.0.1:5000/teams"  class="back">Назад</a>
+<a href="http://127.0.0.1:5000/jury_teams"  class="back">Назад</a>
 </body>
 </html>

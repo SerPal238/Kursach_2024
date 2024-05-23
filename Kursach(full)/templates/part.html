@@ -66,51 +66,36 @@
         <th>Мои баллы</th>
         <th>Мax баллы</th>
     </tr>
+    {% for criterion in case.criteria %}
     <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        <td class="criteria-number"></td>
+        <td>{{ criterion.criteria_name }}</td>
+        <td>
+            <ul>
+                {% for evaluation in participant_scores %}
+                    {% for item in evaluation.criterion_scores %}
+                        {% if item.criterion == criterion.criteria_name %}
+                            <li>{{ item['score'] }}</li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </td>
+        <td>{{ criterion.points }}</td>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+{% endfor %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const criteriaNumbers = document.querySelectorAll(".criteria-number");
+        criteriaNumbers.forEach((element, index) => {
+            element.textContent = index + 1;
+        });
+    });
+</script>
     <tr>
         <td></td>
         <td>Итого:</td>
-        <td></td>
+        <td>{{player.score}}</td>
         <td></td>
     </tr>
 </table>

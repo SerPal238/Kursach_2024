@@ -30,11 +30,14 @@
                 {%endif%}
             {% endfor %}
         {%endfor%}
-
+         <p></p>
 
 
         {% for el in players%}
-                <p class="fs-2 text-white"> {{el.name}} = {{el.score}}</p>
+        <a class="fs-2 btn btn-lg btn-light rounded-pill" href="/player_update/{{el.id}}" style="width: 300px; height: 80px;"> {{el.name}} {{el.score}}</a>
+            {% if (el.id == 2)%}
+                <p></p>
+            {% endif %}
         {% endfor %}
         </p>
     <p></p>

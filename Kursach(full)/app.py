@@ -42,7 +42,7 @@ class Team(db.Model):  #таблица бд для вошедших в игру 
     name_players = db.Column(db.String(300))
     name_team = db.Column(db.String(100))
     contact = db.Column(db.String(100))
-
+    score = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"<users {self.id}>"
@@ -107,6 +107,7 @@ class Evaluation(db.Model):
     jury_id = db.Column(db.Integer, db.ForeignKey('juries.id'), nullable=False)
     jury = db.relationship('Jury', backref='evaluations')
     points = db.Column(db.Integer)
+    criterion_scores = db.Column(db.JSON)
 
     def __repr__(self):
         return f"<Evaluation object with id {self.id}>"
@@ -125,17 +126,33 @@ class Evaluation(db.Model):
     def get_total_score(self):
         return sum(score['score'] for score in self.criterion_scores)
 
-    # Метод для обновления оценки, если она уже существует
-    def update_evaluation(self, existing_criterion, score):
-        if any(criterion['criterion'] == existing_criterion for criterion in self.get_all_criterion_scores):
-            # Критерий уже существует, обновляем его счет
-            for criterion in self.criterion_scores:
-                if criterion['criterion'] == existing_criterion:
-                    criterion['score'] = int(score)
-        else:
-            self.criterion_scores.append({'criterion': existing_criterion, 'score': int(score)})
-        self.points = sum(score['score'] for score in self.criterion_scores)
+class Evaluation_for_team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
+    team = db.relationship('Team', backref='team_evaluations')
+    case_id = db.Column(db.Integer, db.ForeignKey('case.id'), nullable=False)
+    case_teams = db.relationship('Case', backref='team_evaluations')
+    jury_id = db.Column(db.Integer, db.ForeignKey('juries.id'), nullable=False)
+    jury_teams = db.relationship('Jury', backref='team_evaluations')
+    points = db.Column(db.Integer)
+    criterion_scores = db.Column(db.JSON)
 
+    def __repr__(self):
+        return f"<Evaluation object with id {self.id}>"
+
+    # Метод для добавления баллов за критерий
+    def add_criterion_score(self, criterion, score):
+        if not hasattr(self, 'criterion_scores'):
+            self.criterion_scores = []
+        self.criterion_scores.append({'criterion': criterion, 'score': int(score)})
+
+    # Метод для получения всех баллов за критерии
+    def get_all_criterion_scores(self):
+        return self.criterion_scores
+
+    # Метод для получения общего количества баллов
+    def get_total_score(self):
+        return sum(score['score'] for score in self.criterion_scores)
 
 
 class Codes(db.Model): #таблица бд для кодов жюри и игроков при создании игры
@@ -154,6 +171,17 @@ class PlayerCodesAssociation(db.Model):
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'))
     codes_id = db.Column(db.Integer, db.ForeignKey('codes.id'))
     player = db.relationship("Player")
+    codes = db.relationship("Codes")
+
+    def repr(self):
+        return '<PlayerCodesAssociation%r>' % self.id
+
+
+class TeamCodesAssociation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    codes_id = db.Column(db.Integer, db.ForeignKey('codes.id'))
+    team = db.relationship("Team")
     codes = db.relationship("Codes")
 
     def repr(self):
@@ -237,12 +265,17 @@ def index():
     return render_template("home.html")
 
 
+@app.route('/home')
+def index_home():
+    return render_template("home.html")
+
+
 @app.route('/about') #страница про нас
 def about():
     return render_template("about.html")
 
 
-@app.route('/user/<string:name>/<int:id>') #аааа ??? я хз но это нужно??? наверное...
+@app.route('/user/<string:name>/<int:id>')
 def user(name, id):
     return "User page: " + name + " - " + str(id)
 
@@ -269,8 +302,9 @@ def jury():
             session['codes_id'] = check_code.id
             if type_game == "Хакатон" and type_players == "Одиночная игра":
                 return redirect('/jury_participants')
+            if type_game == "Хакатон" and type_players == "Командная игра":
+                return redirect('/jury_teams')
             return redirect(url_for('about')) #здесь должны переходить не на about, а на определенную игру, которая привязана к определенному коду
-
         else:
             return render_template('jury_error.html') #переходим на страницу где выплывает красная табличка с ошибкой, если код игры не совпадает с введенным кодом
     else:
@@ -283,7 +317,7 @@ def player():
     if request.method == "POST":
         code = request.form['psw']
         check_code = Codes.query.filter_by(code_players=code).first()
-        session['codes_id'] = check_code
+        session['codes_id'] = check_code.id
         if check_code:
             namee = request.form['name']
             contactt = request.form['contact']
@@ -295,11 +329,11 @@ def player():
             db.session.add(player_codes_association)
             db.session.commit()
             game_id = check_code.game_id
+            session['igrok'] = new_player.id
             type_game = (Games.query.get(game_id)).type_game
+            hackathon_id = (Games.query.get(game_id)).hackathon_id
             if type_game == "Хакатон":
-                return redirect('/view_for_participants/{}'.format(game_id))
-            if type_game == "Своя игра":
-                return redirect('/ongoing_game')
+                return redirect('/view_for_participants/{}'.format(hackathon_id))
         else:
             return render_template('player_error.html') #переходим на страницу где выплывает красная табличка с ошибкой, если код игры не совпадает с введенным кодом
     else:
@@ -310,17 +344,26 @@ def player():
 @app.route('/teamleader', methods=["POST", "GET"]) #тут игроки (командная игра) входят в игру
 def teamleader():
     if request.method == "POST":
-        hash = generate_password_hash(request.form['psw'])
-        if check_password_hash(hash, '0000') == True:
+        code = request.form['psw']
+        check_code = Codes.query.filter_by(code_players=code).first()
+        session['codes_id'] = check_code.id
+        if check_code:
             namee_teamleader = request.form["teamleader"]
             namee_players = request.form['players']
             namee_team = request.form['team']
             contactt = request.form['contact']
-            db.session.add(Team(name_teamleader=namee_teamleader, name_players=namee_players, name_team=namee_team, contact=contactt))
+            new_team = Team(name_teamleader=namee_teamleader, name_players=namee_players, name_team=namee_team, contact=contactt, score = 0)
+            db.session.add(new_team)
             db.session.commit()
-
-            return redirect(url_for('about')) #здесь должны переходить не на about, а на определенную игру, которая привязана к определенному коду
-
+            team_codes_association = TeamCodesAssociation(team_id=new_team.id, codes_id=check_code.id)
+            db.session.add(team_codes_association)
+            db.session.commit()
+            game_id = check_code.game_id
+            session['team'] = new_team.id
+            type_game = (Games.query.get(game_id)).type_game
+            hackathon_id = (Games.query.get(game_id)).hackathon_id
+            if type_game == "Хакатон":
+                return redirect('/view_for_teams/{}'.format(hackathon_id))
         else:
             return render_template('teamleader_error.html') #переходим на страницу где выплывает красная табличка с ошибкой, если код игры не совпадает с введенным кодом
     else:
@@ -452,17 +495,30 @@ def view_for_participants(case_id):
     return render_template("view_for_participants.html", case=case, criteria=criteria)
 
 
+@app.route('/view_for_teams/<int:case_id>')
+def view_for_teams(case_id):
+    case = Case.query.get(case_id)
+    criteria = Criteria.query.filter_by(case=case).all()
+    return render_template("view_for_teams.html", case=case, criteria=criteria)
+
 @app.route('/jury_participants')
 def participants():
     a = {}
     code = session.get('codes_id')
     codes_id = PlayerCodesAssociation.query.filter_by(codes_id=code).all()
     i = 1
+    players = []
     for code_id in codes_id:
         player = Player.query.get(code_id.player_id)
-        a[i] = player.name if player else None
-        i+=1
+        if player:
+            a[i] = player.name
+            players.append({
+                'id': player.id,
+                'name': player.name,
+                'score': player.score})
+        i += 1
     session['players'] = a
+    session['obshaya_table'] = players
     return render_template("participants.html", slovar=a)
 
 
@@ -489,65 +545,153 @@ def process_form():
         case_id = session.get('case_id')
         case = Case.query.get(case_id)
         jury_id = session.get("jury_id")
-        # Проверяем, есть ли уже оценка для данного игрока и данного члена жюри
         existing_evaluation = Evaluation.query.filter_by(player_id=player.id, case_id=case.id, jury_id=jury_id).first()
         if player:
             if existing_evaluation:
-                for criterion, score in zip(case.criteria, participant_scores):
-                    existing_evaluation.update_evaluation(criterion.criteria_name, score)
-            else:
-                # Если оценки нет, создаем новую
-                new_evaluation = Evaluation(player_id=player.id, case_id=case.id, points=0, jury_id=jury_id, criterion_scores=[])
-                # Добавляем баллы за критерии
-                for criterion, score in zip(case.criteria, participant_scores):
-                    new_evaluation.add_criterion_score(criterion.criteria_name, score)
-                # Сохраняем новый экземпляр в базу данных
-                db.session.add(new_evaluation)
-                total_score = new_evaluation.get_total_score()
-                player.score = total_score
-                new_evaluation.points = total_score
+                db.session.delete(existing_evaluation)
+            new_evaluation = Evaluation(player_id=player.id, case_id=case.id, points=0, jury_id=jury_id, criterion_scores=[])
+            for criterion, score in zip(case.criteria, participant_scores):
+                new_evaluation.add_criterion_score(criterion.criteria_name, score)
+            db.session.add(new_evaluation)
+            total_score = new_evaluation.get_total_score()
+            new_evaluation.points = total_score
+        db.session.commit()
+        all_evaluations = Evaluation.query.filter_by(player_id=player.id).all()
+        score = 0
+        for evaluation in all_evaluations:
+            score += evaluation.points
+        player.score = score
         db.session.commit()
         return redirect(url_for('participants'))
 
 
 @app.route('/jury_participants_general_table')
 def table():
-    return render_template("obshaya_tablica1.html")
+    players = session.get('obshaya_table')
+    return render_template("obshaya_tablica1.html", players=players)
 
 
 @app.route('/jury_teams')
 def team():
-    return render_template("comandsextend.html")
+    a = {}
+    code = session.get('codes_id')
+    codes_id = TeamCodesAssociation.query.filter_by(codes_id=code).all()
+    i = 1
+    teams = []
+    for code_id in codes_id:
+        team = Team.query.get(code_id.team_id)
+        if team:
+            a[i] = team.name_team
+            teams.append({
+                'id': team.id,
+                'name': team.name_team,
+                'score': team.score})
+        i += 1
+    session['teams'] = a
+    session['obshaya_table'] = teams
+    return render_template("comandsextend.html", slovar=a)
 
 
 @app.route('/jury_№team')
 def teamss():
-    return render_template("dlyacom1.html")
+    code_id = session.get('codes_id')
+    code = Codes.query.get(code_id)
+    game = Games.query.get(code.game_id)
+    case = Case.query.get(game.hackathon_id)
+    session['case_id'] = case.id
+    player_number = request.args.get('player_number')
+    igrok = session.get('teams').get(player_number)
+    session['igrok'] = player_number
+    return render_template("dlyacom1.html", case=case, igrok=igrok, player_number=player_number)
+
+@app.route('/save_data_team', methods=['GET', 'POST'])
+def team_diff_ff15():
+    if request.method == 'POST':
+        # Получаем все значения input элементов с именем 'participant_score'
+        igrok = session.get('igrok')
+        participant_scores = request.form.getlist('participant_score')
+        team = Team.query.filter_by(id=igrok).first()
+        case_id = session.get('case_id')
+        case = Case.query.get(case_id)
+        jury_id = session.get("jury_id")
+        existing_evaluation = Evaluation_for_team.query.filter_by(team_id=team.id, case_id=case.id, jury_id=jury_id).first()
+        if team:
+            if existing_evaluation:
+                db.session.delete(existing_evaluation)
+            new_evaluation = Evaluation_for_team(team_id=team.id, case_id=case.id, points=0, jury_id=jury_id, criterion_scores=[])
+            for criterion, score in zip(case.criteria, participant_scores):
+                new_evaluation.add_criterion_score(criterion.criteria_name, score)
+            db.session.add(new_evaluation)
+            total_score = new_evaluation.get_total_score()
+            new_evaluation.points = total_score
+        db.session.commit()
+        all_evaluations = Evaluation_for_team.query.filter_by(team_id=team.id).all()
+        score = 0
+        for evaluation in all_evaluations:
+            score += evaluation.points
+        team.score = score
+        db.session.commit()
+        return redirect(url_for('team'))
 
 
 @app.route('/jury_general_table_for_teams')
 def tableteam():
-    return render_template("comtablext.html")
+    teams = session.get('obshaya_table')
+    return render_template("comtablext.html", teams = teams)
 
 
 @app.route('/results_for_participants')
 def respart():
-    return render_template("respart.html")
+    code = session.get('codes_id')
+    codes_id = PlayerCodesAssociation.query.filter_by(codes_id=code).all()
+    players = []
+    player_id = session.get('igrok')
+    for code_id in codes_id:
+        player = Player.query.get(code_id.player_id)
+        players.append(player) if player else None
+    return render_template("respart.html", players=players, player_id=player_id)
 
 
-@app.route('/results_for_participant')
-def respartconcrete():
-    return render_template("part.html")
+@app.route('/results_for_participant/<int:id>')
+def respartconcrete(id):
+    code_id = session.get('codes_id')
+    code = Codes.query.get(code_id)
+    game = Games.query.get(code.game_id)
+    case = Case.query.get(game.hackathon_id)
+    session['case_id'] = case.id
+    player = Player.query.get(id)
+    evaluations = (Evaluation.query.filter_by(player_id = player.id).all())
+    scores_of_criterions = []
+    for evaluation in evaluations:
+        scores_of_criterions.append(evaluation.criterion_scores)
+    return render_template("part.html",zip=zip, case=case, participant_scores = evaluations, player = player)
 
 
 @app.route('/results_for_teams')
 def resteam():
-    return render_template("resteam.html")
+    code = session.get('codes_id')
+    codes_id = TeamCodesAssociation.query.filter_by(codes_id=code).all()
+    teams = []
+    team_id = session.get('team')
+    for code_id in codes_id:
+        team = Team.query.get(code_id.team_id)
+        teams.append(team) if team else None
+    return render_template("resteam.html", teams = teams, team_id = team_id)
 
 
-@app.route('/results_for_team')
-def resteamconcrete():
-    return render_template("team.html")
+@app.route('/results_for_team/<int:id>')
+def resteamconcrete(id):
+    code_id = session.get('codes_id')
+    code = Codes.query.get(code_id)
+    game = Games.query.get(code.game_id)
+    case = Case.query.get(game.hackathon_id)
+    session['case_id'] = case.id
+    team = Team.query.get(id)
+    evaluations = Evaluation_for_team.query.filter_by(team_id=team.id).all()
+    scores_of_criterions = []
+    for evaluation in evaluations:
+        scores_of_criterions.append(evaluation.criterion_scores)
+    return render_template("team.html", zip=zip, case=case, participant_scores=evaluations, player=team)
 
 
 @app.route('/create_code', methods=["POST", "GET"]) #тут организатор после создания игры создаем коды
@@ -557,7 +701,7 @@ def create_code():
         codee_jury = request.form['code_jury']
         codee_players = request.form['code_players']
 
-        db.session.add(Codes(code_jury=codee_jury, code_players=codee_players, game_id=game_idd, team_id=0))
+        db.session.add(Codes(code_jury=codee_jury, code_players=codee_players, game_id=game_idd))
         db.session.commit()
 
         return redirect(url_for('manager_menu')) #редиректим в меню организатора (пушта вдруг он захочет создать еще одну игру)
@@ -728,26 +872,9 @@ def superquestion_delete_super(id):
 
 @app.route('/ongoing_game')
 def ongoing_game():
-    game_id = session.get('game_id')
-    game_questions = GameQuestion.query.filter_by(game_id=game_id).all()
-    questions = Question.query.filter(Question.id.in_(
-        [game_question.question_id for game_question in game_questions]
-    )).all()
-    game_themes = GameTheme.query.filter_by(game_id=game_id).all()
-    themes = Theme.query.filter(Theme.id.in_(
-        [game_theme.theme_id for game_theme in game_themes]
-    )).all()
-
-    a = {}
-    code = session.get('codes_id')
-    codes_id = PlayerCodesAssociation.query.filter_by(codes_id=code).all()
-    i = 1
-    for code_id in codes_id:
-        player = Player.query.get(code_id.player_id)
-        a[i] = player.name if player else None
-        i += 1
-    session['players'] = a
-    players = a
+    questions = Question.query.order_by(Question.id).all()
+    themes = Theme.query.order_by(Theme.id).all()
+    players = Player.query.order_by(Player.id).all()
     return render_template("ongoing_game.html", questions=questions, themes=themes, players=players)
 
 

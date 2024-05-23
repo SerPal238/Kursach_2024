@@ -3,7 +3,11 @@
 {% block com %}
 Команды
 {% endblock %}
-
+{% block part %}
+{% for key, value in slovar.items() %}
+<a href="http://127.0.0.1:5000/jury_№team?player_number={{ key }}" class="part{{ key }}">{{ value }}</a>
+{% endfor %}
+{% endblock %}
 {% block comcom %}
 <h1 style="color: white; font-family: Arial; text-align: center; font-size: 50px">Команды</h1>
 {% endblock %}

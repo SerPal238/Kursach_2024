@@ -63,49 +63,22 @@
         <th>Итого баллов</th>
         <th>Мax баллы</th>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr style="height:30px">
-        <td></td>
-        <td></td>
-        <td></td>
-
-    </tr>
-    <tr style="height:30px">
-        <td></td>
-        <td></td>
-        <td></td>
+    {%for player in players%}
+        </tr>
+        <td class="player-number"></td>
+        <td>{{player.name}}</td>
+        <td>{{player.score}}</td>
+    {% endfor %}
     </tr>
 </table>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const playerNumbers = document.querySelectorAll(".player-number");
+        playerNumbers.forEach((element, index) => {
+            element.textContent = index + 1;
+        });
+    });
+</script>
 <div class="back">Назад</div>
 <a href="http://127.0.0.1:5000/participants" class="back">Назад</a>
 
